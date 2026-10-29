@@ -43,10 +43,7 @@ body {
   background-color: var(--bg);
   background-image:
     radial-gradient(1000px 560px at 85% -12%, var(--glow), transparent 62%),
-    radial-gradient(800px 600px at -15% 105%, rgba(74,86,52,.45), transparent 62%),
-    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
-  background-size: auto, auto, 13px 13px, 13px 13px;
+    radial-gradient(800px 600px at -15% 105%, rgba(74,86,52,.45), transparent 62%);
   color: var(--fg);
   font-family: var(--font-body);
   font-size: 16px;
@@ -287,6 +284,53 @@ footer { font-size: 12px; color: var(--muted); text-align: center; display: flex
 
 .screen { animation: rise .32s ease both; }
 @keyframes rise { from { opacity: .001; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+/* живий тактичний фон */
+.wrap { position: relative; z-index: 1; }
+.tac { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: .4; transition: opacity .8s ease; }
+body.home .tac { opacity: 1; }
+.tac::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 90% 70% at 50% 45%, transparent 35%, rgba(8,10,6,.6) 100%); }
+.tac-grid { position: absolute; inset: -140px; transform: translate(calc(var(--px, 0) * -14px), calc(var(--py, 0) * -14px)); transition: transform .5s ease-out; }
+.tac-grid::before { content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(220,174,63,.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220,174,63,.09) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);
+  background-size: 65px 65px, 65px 65px, 13px 13px, 13px 13px;
+  animation: tacdrift 16s linear infinite; }
+@keyframes tacdrift { to { transform: translate(65px, 65px); } }
+.tac-rings, .tac-radar { position: absolute; width: 160vmax; height: 160vmax; left: calc(80% - 80vmax); top: calc(18% - 80vmax); border-radius: 50%; opacity: 0; transition: opacity .8s ease; }
+body.home .tac-rings, body.home .tac-radar { opacity: 1; }
+.tac-rings {
+  background:
+    linear-gradient(rgba(220,174,63,.16), rgba(220,174,63,.16)) center / 1px 100% no-repeat,
+    linear-gradient(90deg, rgba(220,174,63,.16), rgba(220,174,63,.16)) center / 100% 1px no-repeat,
+    repeating-radial-gradient(circle, transparent 0 89px, rgba(220,174,63,.14) 89px 90px);
+  -webkit-mask: radial-gradient(circle, #000 0 22%, transparent 55%); mask: radial-gradient(circle, #000 0 22%, transparent 55%); }
+.tac-radar {
+  background: conic-gradient(from 0deg, transparent 0 290deg, rgba(220,174,63,0) 280deg, rgba(220,174,63,.13) 358deg, rgba(240,205,110,.42) 359.4deg, transparent 360deg);
+  -webkit-mask: radial-gradient(circle, #000 0 20%, transparent 52%); mask: radial-gradient(circle, #000 0 20%, transparent 52%);
+  animation: tacsweep 7s linear infinite; }
+@keyframes tacsweep { to { transform: rotate(360deg); } }
+.tac-scan { position: absolute; left: 0; right: 0; top: -140px; height: 140px; background: linear-gradient(to bottom, transparent, rgba(220,174,63,.03) 80%, rgba(240,205,110,.18) 99%, transparent); animation: tacscan 9s linear infinite; }
+@keyframes tacscan { to { transform: translateY(calc(100vh + 140px)); } }
+.blip { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #f0cd6e; box-shadow: 0 0 12px #dcae3f; opacity: 0; animation: tacblip 7s linear infinite; }
+.blip.red { background: #e2574c; box-shadow: 0 0 12px #c0392f; }
+.blip::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid currentColor; color: #dcae3f; animation: tacping 7s ease-out infinite; animation-delay: inherit; }
+.blip.red::before { color: #e2574c; }
+.blip span { position: absolute; left: 14px; top: -7px; font-family: var(--font-type); font-size: 10px; letter-spacing: .12em; color: rgba(240,205,110,.9); white-space: nowrap; }
+.blip.l span { left: auto; right: 14px; }
+.blip.red span { color: rgba(240,140,130,.95); }
+body:not(.home) .blip { display: none; }
+@keyframes tacblip { 0% { opacity: 0; transform: scale(.3); } 2% { opacity: 1; transform: scale(1.25); } 6% { transform: scale(1); } 45% { opacity: .55; } 75% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes tacping { 0% { transform: scale(1); opacity: .9; } 18% { transform: scale(4.5); opacity: 0; } 100% { opacity: 0; } }
+.tac-c { position: absolute; width: 22px; height: 22px; border: 2px solid rgba(220,174,63,.5); }
+.tac-c.a { top: 8px; left: 8px; border-right: 0; border-bottom: 0; }
+.tac-c.b { top: 8px; right: 8px; border-left: 0; border-bottom: 0; }
+.tac-c.c { bottom: 8px; left: 8px; border-right: 0; border-top: 0; }
+.tac-c.d { bottom: 8px; right: 8px; border-left: 0; border-top: 0; }
+.tac-read { position: absolute; left: 16px; bottom: 14px; font-family: var(--font-type); font-size: 10px; letter-spacing: .14em; color: rgba(220,174,63,.55); opacity: 0; transition: opacity .8s ease; }
+body.home .tac-read { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition: none !important; }
 }
@@ -307,6 +351,20 @@ footer { font-size: 12px; color: var(--muted); text-align: center; display: flex
 </head>
 <body>
 <div class="draft">Чернетка для погодження. Не офіційний ресурс НГУ.</div>
+<div class="tac" aria-hidden="true">
+  <div class="tac-grid"></div>
+  <div class="tac-rings"></div>
+  <div class="tac-radar"></div>
+  <div class="tac-scan"></div>
+  <i class="blip" data-x=".16" data-y=".24"><span>КОТ-01</span></i>
+  <i class="blip l" data-x=".9" data-y=".46"><span>КОТ-07</span></i>
+  <i class="blip" data-x=".34" data-y=".62"><span>МУР-12</span></i>
+  <i class="blip red" data-x=".58" data-y=".38"><span>ЦЕ ТИ?</span></i>
+  <i class="blip" data-x=".1" data-y=".84"><span>КОТ-20</span></i>
+  <i class="blip l" data-x=".78" data-y=".8"><span>МУР-03</span></i>
+  <i class="tac-c a"></i><i class="tac-c b"></i><i class="tac-c c"></i><i class="tac-c d"></i>
+  <div class="tac-read">СЕКТОР ПІВДЕНЬ · СКАН <b id="tacN">01</b></div>
+</div>
 <div class="wrap">
   <div class="topbar"><span><b>НГУ</b> · Південне ОТО</span><span>міні-гра · 2 хв</span></div>
   <main id="app" aria-live="polite"></main>
@@ -763,6 +821,7 @@ footer { font-size: 12px; color: var(--muted); text-align: center; display: flex
   function P(id) { currentField = GROUPS[ROLES[id].g].field; return patch(id); }
 
   function renderStart() {
+    document.body.classList.add("home");
     document.body.style.setProperty("--glow", "rgba(220,174,63,.13)");
     var show = ["bpla", "rozvid", "medyk", "bmp", "fpv", "zenit", "kukhar"];
     var rot = [-14, -8, -3, 2, 6, 10, 15], z = [1, 2, 3, 7, 4, 5, 6];
@@ -777,7 +836,7 @@ footer { font-size: 12px; color: var(--muted); text-align: center; display: flex
         '<div class="legend">' + legend + '</div>' +
         '<button class="btn" id="go" type="button">Почати гру</button>' +
       '</section>';
-    document.getElementById("go").addEventListener("click", function () { state.i = 0; state.picks = []; state.grp = null; renderQ(); });
+    document.getElementById("go").addEventListener("click", function () { document.body.classList.remove("home"); state.i = 0; state.picks = []; state.grp = null; renderQ(); });
   }
 
   function mix(arr) { for (var i = arr.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var t = arr[i]; arr[i] = arr[k]; arr[k] = t; } return arr; }
@@ -925,6 +984,28 @@ footer { font-size: 12px; color: var(--muted); text-align: center; display: flex
     document.getElementById("copyPhone").addEventListener("click", function () { copy("063 236 02 22", "Номер скопійовано"); });
     document.getElementById("again").addEventListener("click", function () { state.i = 0; state.picks = []; state.grp = null; renderStart(); window.scrollTo(0, 0); });
     window.scrollTo(0, 0);
+  }
+
+  /* ---------- живий фон ---------- */
+  var tac = document.querySelector(".tac");
+  function placeBlips() {
+    if (!tac) return;
+    var W = window.innerWidth, H = window.innerHeight, cx = W * 0.8, cy = H * 0.18;
+    Array.prototype.forEach.call(tac.querySelectorAll(".blip"), function (b) {
+      var x = parseFloat(b.getAttribute("data-x")) * W, y = parseFloat(b.getAttribute("data-y")) * H;
+      var a = (Math.atan2(x - cx, cy - y) * 180 / Math.PI + 360) % 360;
+      b.style.left = x + "px"; b.style.top = y + "px"; b.style.animationDelay = (a / 360 * 7).toFixed(2) + "s";
+    });
+  }
+  placeBlips();
+  window.addEventListener("resize", placeBlips);
+  if (tac && !reduce) {
+    window.addEventListener("pointermove", function (e) {
+      tac.style.setProperty("--px", (e.clientX / window.innerWidth - 0.5).toFixed(3));
+      tac.style.setProperty("--py", (e.clientY / window.innerHeight - 0.5).toFixed(3));
+    }, { passive: true });
+    var scanN = 1;
+    setInterval(function () { scanN = scanN % 99 + 1; var n = document.getElementById("tacN"); if (n) n.textContent = (scanN < 10 ? "0" : "") + scanN; }, 7000);
   }
 
   window.__kotyk = { R: R, Q1: Q1, Q2: Q2, groupOf: groupOf, roleOf: roleOf };
